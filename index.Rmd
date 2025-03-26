@@ -8,3 +8,56 @@ output:
 ---
 
 This is my JSC370 Final Project website.
+
+```{r echo=FALSE, include=FALSE}
+# install.packages("knitr")  # This will install the latest version of knitr
+# install.packages("rmarkdown")  # This will install the latest version of rmarkdown
+
+# options(repos = c(CRAN = "https://cloud.r-project.org/"))
+# install.packages(c("ggplot2", "plotly", "rmarkdown", "tidyverse"))
+library(ggplot2)
+library(rmarkdown)
+library(tidyverse)
+library(plotly)
+library(leaflet)
+```
+
+```{r, include=FALSE, echo=FALSE}
+# Load the data
+yelp_data <- read.csv("yelp_business.csv")
+```
+
+## Showcasing Interactive Plots {.tabset}
+
+### Figure 1: Starbucks Stores vs. State Population
+```{r plot1, echo=FALSE}
+yelp_toronto <- yelp_data %>% filter(city == "Toronto")
+
+# Scatter plot: Review count vs. Stars, colored by state
+p1 <- ggplot(yelp_toronto, aes(x = review_count, y = stars)) +
+  geom_point(alpha = 0.7) +
+  labs(title = "Yelp Reviews vs. Rating",
+       x = "Review Count",
+       y = "Stars") +
+  theme_minimal()
+
+ggplotly(p1)
+
+```
+
+### Figure 2: Starbucks Store Density Across the USA
+```{r plot2, echo=FALSE}
+# Interactive Map
+yelp_map <- leaflet(yelp_toronto) %>%
+  addTiles() %>%
+  addCircleMarkers(
+    lng = ~longitude, lat = ~latitude,
+    popup = ~paste("<b>", name, "</b><br>", address, "<br>Stars: ", stars),
+    radius = 5,
+    color = "blue",
+    fillOpacity = 0.6
+  )
+
+yelp_map
+```
+
